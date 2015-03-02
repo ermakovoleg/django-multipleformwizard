@@ -68,7 +68,9 @@ class MultipleFormWizardView(BaseWizardView):
                 if isinstance(form, dict):
                     form_mapping = form
                     computed_form_list[six.text_type(step_name)] = form_mapping
-
+                elif isinstance(form, (list, tuple)):
+                    form_mapping = OrderedDict(form)
+                    computed_form_list[six.text_type(step_name)] = form_mapping
                 elif issubclass(form, forms.Form):
                     computed_form_list[six.text_type(step_name)] = form
             else:

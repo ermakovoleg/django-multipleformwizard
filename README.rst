@@ -35,7 +35,6 @@ Example use
 .. code-block:: python
 
     from __future__ import unicode_literals
-    from collections import OrderedDict
 
     from django import forms
     from django.shortcuts import render_to_response
@@ -47,10 +46,11 @@ Example use
     class Wizard(SessionMultipleFormWizardView):
         form_list = [
             ("start", Form1),
-            ("user_info", OrderedDict((
+            ("user_info", (
                 ('account', Form2),
                 ('address', Form3)
-            )))]
+            )
+        ]
 
         templates = {
             "start": 'demo/wizard-start.html',
