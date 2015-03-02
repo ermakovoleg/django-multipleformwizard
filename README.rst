@@ -33,7 +33,6 @@ Example use
 -----------
 
 .. code-block:: python
-    :emphasize-lines: 7,12,13,14,15,16,17
 
     from __future__ import unicode_literals
     from collections import OrderedDict
