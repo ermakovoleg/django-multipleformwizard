@@ -40,11 +40,11 @@ Example use
     from django import forms
     from django.shortcuts import render_to_response
 
-    from multipleformwizard.views import MultipleFormWizardView
+    from multipleformwizard import SessionMultipleFormWizardView
 
     from .forms import Form1, Form2, Form3
 
-    class Wizard(MultipleFormWizardView):
+    class Wizard(SessionMultipleFormWizardView):
         form_list = [
             ("start", Form1),
             ("user_info", OrderedDict((
