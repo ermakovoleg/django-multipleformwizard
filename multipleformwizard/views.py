@@ -381,11 +381,12 @@ class NamedUrlMultipleFormWizardView(MultipleFormWizardView):
         pass a done_step_name to change the URL name of the "done" view.
         """
         url_name = kwargs.pop('url_name', getattr(cls, 'url_name', None)) or None
+        done_step_name = kwargs.pop('done_step_name', getattr(cls, 'done_step_name', None)) or 'done'
 
         assert url_name is not None, 'URL name is needed to resolve correct wizard URLs'
         extra_kwargs = {
-            'done_step_name': kwargs.pop('done_step_name', 'done'),
-            'url_name': kwargs.pop('url_name'),
+            'done_step_name': done_step_name,
+            'url_name': url_name,
         }
         initkwargs = super(NamedUrlMultipleFormWizardView, cls).get_initkwargs(*args, **kwargs)
         initkwargs.update(extra_kwargs)
