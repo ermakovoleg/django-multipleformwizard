@@ -5,7 +5,8 @@ django-multipleformwizard
 .. image:: https://badge.fury.io/py/django-multipleformwizard.png
     :target: https://badge.fury.io/py/django-multipleformwizard
 
-.. [![Build Status](https://travis-ci.org/vikingco/django-multipleformwizard.svg?branch=master)](https://travis-ci.org/vikingco/django-multipleformwizard)
+.. image:: https://travis-ci.org/vikingco/django-multipleformwizard.svg?branch=master
+    :target: https://travis-ci.org/dirkmoors/django-multipleformwizard
 
 .. image:: https://coveralls.io/repos/dirkmoors/django-multipleformwizard/badge.png?branch=master
     :target: https://coveralls.io/r/dirkmoors/django-multipleformwizard?branch=master
