@@ -30,7 +30,7 @@ setup(
     description="""An extension to the official Django form wizard supporting multiple forms on a wizard step.""",
     long_description=readme + '\n\n' + history,
     author='Dirk Moors',
-    author_email='dirkmoors@gmail.com',
+    author_email='dirk.moors@mobilevikings.com',
     url='https://github.com/dirkmoors/django-multipleformwizard',
     packages=[
         'multipleformwizard',
