@@ -380,7 +380,9 @@ class NamedUrlMultipleFormWizardView(MultipleFormWizardView):
         We require a url_name to reverse URLs later. Additionally users can
         pass a done_step_name to change the URL name of the "done" view.
         """
-        assert 'url_name' in kwargs, 'URL name is needed to resolve correct wizard URLs'
+        url_name = kwargs.pop('url_name', getattr(cls, 'url_name', None)) or None
+
+        assert url_name is not None, 'URL name is needed to resolve correct wizard URLs'
         extra_kwargs = {
             'done_step_name': kwargs.pop('done_step_name', 'done'),
             'url_name': kwargs.pop('url_name'),
