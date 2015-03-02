@@ -37,18 +37,19 @@ setup(
     ],
     include_package_data=True,
     install_requires=[
+        'Django>=1.6',
+        'six>=1.9.0'
     ],
-    license="BSD",
+    license="MIT",
     zip_safe=False,
     keywords='django-multipleformwizard',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 4 - Beta',
         'Framework :: Django',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
+        'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
