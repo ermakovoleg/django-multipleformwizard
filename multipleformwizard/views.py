@@ -179,7 +179,6 @@ class MultipleFormWizardView(BaseWizardView):
         self.storage.reset()
         return done_response
 
-
     def get(self, request, *args, **kwargs):
         """
         This method handles GET requests.
@@ -417,7 +416,7 @@ class NamedUrlMultipleFormWizardView(MultipleFormWizardView):
         # is the current step the "done" name/view?
         elif step_url == self.done_step_name:
             last_step = self.steps.last
-            return self.render_done(self.get_form(step=last_step,
+            return self.render_done(self.get_forms(step=last_step,
                 data=self.storage.get_step_data(last_step),
                 files=self.storage.get_step_files(last_step)
             ), **kwargs)
@@ -426,14 +425,14 @@ class NamedUrlMultipleFormWizardView(MultipleFormWizardView):
         # if yes, change the step in the storage (if name exists)
         elif step_url == self.steps.current:
             # URL step name and storage step name are equal, render!
-            return self.render(self.get_form(
+            return self.render(self.get_forms(
                 data=self.storage.current_step_data,
                 files=self.storage.current_step_files,
             ), **kwargs)
 
         elif step_url in self.get_form_list():
             self.storage.current_step = step_url
-            return self.render(self.get_form(
+            return self.render(self.get_forms(
                 data=self.storage.current_step_data,
                 files=self.storage.current_step_files,
             ), **kwargs)
@@ -453,12 +452,12 @@ class NamedUrlMultipleFormWizardView(MultipleFormWizardView):
             return self.render_goto_step(wizard_goto_step)
         return super(NamedUrlMultipleFormWizardView, self).post(*args, **kwargs)
 
-    def get_context_data(self, form, **kwargs):
+    def get_context_data(self, forms, **kwargs):
         """
         NamedUrlWizardView provides the url_name of this wizard in the context
         dict `wizard`.
         """
-        context = super(NamedUrlMultipleFormWizardView, self).get_context_data(form=form, **kwargs)
+        context = super(NamedUrlMultipleFormWizardView, self).get_context_data(forms=forms, **kwargs)
         context['wizard']['url_name'] = self.url_name
         return context
 
