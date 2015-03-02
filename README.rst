@@ -32,7 +32,7 @@ Then use it in a project::
 Example use
 -----------
 
-'''
+```
 from __future__ import unicode_literals
 
 from collections import OrderedDict
@@ -75,4 +75,4 @@ class Wizard(MultipleFormWizardView):
         return render_to_response('demo/wizard-end.html', {
             'form_data': result,
         })
-'''
+```
