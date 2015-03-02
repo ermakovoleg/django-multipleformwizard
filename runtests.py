@@ -1,7 +1,7 @@
 import sys
 
 try:
-    from django.conf import settings
+    from django.conf import settings, global_settings
 
     settings.configure(
         DEBUG=True,
@@ -18,6 +18,7 @@ try:
             "django.contrib.sites",
             "multipleformwizard",
         ],
+        MIDDLEWARE_CLASSES=global_settings.MIDDLEWARE_CLASSES,
         SITE_ID=1,
         NOSE_ARGS=['-s'],
     )
