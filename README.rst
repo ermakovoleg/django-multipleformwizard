@@ -2,7 +2,7 @@
 django-multipleformwizard
 =============================
 
-.. image:: https://badge.fury.io/py/django-multipleformwizard.png
+.. image:: https://badge.fury.io/py/django-multipleformwizard.svg
     :target: https://badge.fury.io/py/django-multipleformwizard
 
 .. image:: https://travis-ci.org/vikingco/django-multipleformwizard.svg?branch=master
