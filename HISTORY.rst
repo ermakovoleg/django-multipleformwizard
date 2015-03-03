@@ -3,7 +3,17 @@
 History
 -------
 
-0.1.0 (2015-03-02)
+0.2.0 (2015-03-03)
 ++++++++++++++++++
 
-* First release on PyPI.
+* Included documentation.
+
+0.1.9 (2015-03-03)
+++++++++++++++++++
+
+* Various bugfixes.
+
+0.1.7 (2015-03-02)
+++++++++++++++++++
+
+* First stable release on PyPI.
