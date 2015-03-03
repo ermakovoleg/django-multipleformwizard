@@ -31,7 +31,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author='Dirk Moors',
     author_email='dirk.moors@mobilevikings.com',
-    url='https://github.com/dirkmoors/django-multipleformwizard',
+    url='https://github.com/vikingco/django-multipleformwizard',
     packages=[
         'multipleformwizard',
     ],
