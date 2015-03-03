@@ -5,7 +5,7 @@ Credits
 Development Lead
 ----------------
 
-* Dirk Moors <dirk.moors@mobilevikings.com>
+* Dirk Moors <dirkmoors@gmail.com>
 
 Contributors
 ------------
