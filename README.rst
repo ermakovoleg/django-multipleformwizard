@@ -11,7 +11,7 @@ django-multipleformwizard
 .. image:: https://coveralls.io/repos/vikingco/django-multipleformwizard/badge.svg?branch=master
     :target: https://coveralls.io/r/vikingco/django-multipleformwizard?branch=master
 
-.. image:: https://readthedocs.org/projects/django-multipleformwizard/?badge=latest
+.. image:: https://readthedocs.org/projects/django-multipleformwizard/badge/?version=latest
     :target: https://django-multipleformwizard.readthedocs.org
 
 An extension to the official Django form wizard supporting multiple forms on a wizard step.
