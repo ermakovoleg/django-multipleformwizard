@@ -27,7 +27,10 @@ Install django-multipleformwizard::
 
 Then use it in a project::
 
-    import django-multipleformwizard
+    # Every *WizardView that can be imported is an equivalent of a builtin *WizardView in Django
+    from multipleformwizard import (SessionMultipleFormWizardView, CookieMultipleFormWizardView,
+                                    NamedUrlSessionMultipleFormWizardView, NamedUrlCookieMultipleFormWizardView,
+                                    MultipleFormWizardView, NamedUrlMultipleFormWizardView)
 
 Example use
 -----------
