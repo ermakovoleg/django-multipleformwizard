@@ -42,7 +42,7 @@ setup(
     ],
     license="MIT",
     zip_safe=False,
-    keywords='django-multipleformwizard',
+    keywords='django multipleformwizard multiple form wizard',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Framework :: Django',
