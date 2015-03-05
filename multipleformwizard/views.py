@@ -406,6 +406,18 @@ class MultipleFormWizardView(BaseWizardView):
                         cleaned_data.update(form_data)
         return cleaned_data
 
+    def get_all_cleaned_data_dict(self):
+        """
+        Returns a merged dictionary of all step cleaned_data dictionaries, grouped per step.
+        If a step contains a `FormSet`, the key will be prefixed with
+        'formset-' and contain a list of the formset cleaned_data dictionaries.
+        """
+        cleaned_data = {}
+        for step in self.form_list:
+            cleaned_data[step] = self.get_cleaned_data_for_step(step)
+        return cleaned_data
+
+
 
 class SessionMultipleFormWizardView(MultipleFormWizardView):
     """
