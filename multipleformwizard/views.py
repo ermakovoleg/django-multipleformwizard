@@ -351,6 +351,61 @@ class MultipleFormWizardView(BaseWizardView):
         }
         return context
 
+    def get_all_cleaned_data(self):
+        """
+        Returns a merged dictionary of all step cleaned_data dictionaries.
+        If a step contains a `FormSet`, the key will be prefixed with
+        'formset-' and contain a list of the formset cleaned_data dictionaries.
+        """
+        cleaned_data = {}
+        for form_key in self.get_form_list():
+            form_collection = self.get_forms(
+                step=form_key,
+                data=self.storage.get_step_data(form_key),
+                files=self.storage.get_step_files(form_key)
+            )
+            for form_obj in form_collection:
+                if form_obj.is_valid():
+                    if isinstance(form_obj.cleaned_data, (tuple, list)):
+                        cleaned_data.update({
+                            'formset-%s' % form_key: form_obj.cleaned_data
+                        })
+                    else:
+                        cleaned_data.update(form_obj.cleaned_data)
+        return cleaned_data
+
+    def get_cleaned_data_for_step(self, step):
+        """
+        Returns the cleaned data for a given `step`. Before returning the
+        cleaned data, the stored values are revalidated through the form.
+        If the data doesn't validate, None will be returned.
+        """
+        cleaned_data = {}
+        if step in self.form_list:
+            form_collection = self.get_forms(
+                step=step,
+                data=self.storage.get_step_data(step),
+                files=self.storage.get_step_files(step))
+
+            multiple_forms = isinstance(self.form_list[step], dict)
+
+            if multiple_forms:
+                multiple_form_keys = self.form_list[step].keys()
+
+            for i, form_obj in enumerate(form_collection):
+                if form_obj.is_valid():
+                    form_data = form_obj.cleaned_data
+                    if isinstance(form_data, (tuple, list)):
+                        form_key = step
+                        cleaned_data.update({
+                            'formset-%s' % form_key: form_data
+                        })
+                    elif multiple_forms and multiple_form_keys:
+                        cleaned_data[multiple_form_keys[i]] = form_data
+                    else:
+                        cleaned_data.update(form_data)
+        return cleaned_data
+
 
 class SessionMultipleFormWizardView(MultipleFormWizardView):
     """
