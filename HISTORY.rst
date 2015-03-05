@@ -3,6 +3,11 @@
 History
 -------
 
+0.2.5 (2015-03-05)
+++++++++++++++++++
+
+* Extended interface with convenience method: get_all_cleaned_data_dict().
+
 0.2.4 (2015-03-05)
 ++++++++++++++++++
 
