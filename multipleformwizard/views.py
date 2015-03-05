@@ -414,7 +414,10 @@ class MultipleFormWizardView(BaseWizardView):
         """
         cleaned_data = {}
         for step in self.form_list:
-            cleaned_data[step] = self.get_cleaned_data_for_step(step)
+            data = self.get_cleaned_data_for_step(step)
+            if not data:
+                continue
+            cleaned_data[step] = data
         return cleaned_data
 
 
