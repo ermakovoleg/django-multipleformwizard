@@ -15,6 +15,7 @@ import six
 
 class MultipleFormWizardView(BaseWizardView):
     template_name = 'multipleformwizard/wizard_form.html'
+    cleaned_data_in_context = False
 
     @classmethod
     def get_initkwargs(cls, form_list=None, initial_dict=None,
@@ -342,6 +343,12 @@ class MultipleFormWizardView(BaseWizardView):
             kwargs['view'] = self
         context = kwargs
         context.update(self.storage.extra_data)
+
+        if self.cleaned_data_in_context:
+            context.update({
+                'cleaned_data': self.get_all_cleaned_data_dict()
+            })
+
         context['wizard'] = {
             'forms': forms,
             'steps': self.steps,

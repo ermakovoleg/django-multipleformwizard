@@ -3,6 +3,11 @@
 History
 -------
 
+0.2.7 (2015-03-05)
+++++++++++++++++++
+
+* Extended interface with optional setting to expose cleaned_data of previous to the context of the current step.
+
 0.2.6 (2015-03-05)
 ++++++++++++++++++
 
