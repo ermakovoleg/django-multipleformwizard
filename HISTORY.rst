@@ -3,6 +3,11 @@
 History
 -------
 
+0.2.9 (2015-03-16)
+++++++++++++++++++
+
+* Extended interface with possibility to load form_list lazily.
+
 0.2.8 (2015-03-09)
 ++++++++++++++++++
 

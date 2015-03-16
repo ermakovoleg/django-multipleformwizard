@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from collections import OrderedDict
+
 from django import forms
 from django.contrib.formtools.wizard.storage.exceptions import NoFileStorageConfigured
 from django.core.exceptions import ValidationError
@@ -9,13 +10,14 @@ from django.forms import formsets
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.formtools.wizard.views import ManagementForm, WizardView as BaseWizardView
-
 import six
 
 
 class MultipleFormWizardView(BaseWizardView):
     template_name = 'multipleformwizard/wizard_form.html'
     cleaned_data_in_context = False
+    lazy = False
+    _form_list_initialized = False
 
     @classmethod
     def get_initkwargs(cls, form_list=None, initial_dict=None,
@@ -42,8 +44,10 @@ class MultipleFormWizardView(BaseWizardView):
           will be called with the wizardview instance as the only argument.
           If the return value is true, the step's form will be used.
         """
+        lazy = kwargs.pop('lazy', getattr(cls, 'lazy', None)) or False
 
         kwargs.update({
+            'lazy': lazy,
             'initial_dict': initial_dict or kwargs.pop('initial_dict',
                 getattr(cls, 'initial_dict', None)) or {},
             'instance_dict': instance_dict or kwargs.pop('instance_dict',
@@ -52,9 +56,18 @@ class MultipleFormWizardView(BaseWizardView):
                 getattr(cls, 'condition_dict', None)) or {}
         })
 
-        form_list = form_list or kwargs.pop('form_list',
-            getattr(cls, 'form_list', None)) or []
+        if lazy:
+            kwargs['form_list'] = []
+            return kwargs
 
+        form_list = form_list or kwargs.pop('form_list', getattr(cls, 'form_list', None)) or []
+
+        # build the kwargs for the wizardview instances
+        kwargs['form_list'] = cls.compute_form_list(form_list, *args, **kwargs)
+        return kwargs
+
+    @classmethod
+    def compute_form_list(cls, form_list, *args, **kwargs):
         computed_form_list = OrderedDict()
 
         assert len(form_list) > 0, 'at least one form is needed'
@@ -99,9 +112,26 @@ class MultipleFormWizardView(BaseWizardView):
                             "You need to define 'file_storage' in your "
                             "wizard view in order to handle file uploads.")
 
-        # build the kwargs for the wizardview instances
-        kwargs['form_list'] = computed_form_list
-        return kwargs
+        return computed_form_list
+
+    def create_form_list(self):
+        return []
+
+    def get_form_list(self):
+        if not self._form_list_initialized and self.lazy:
+            # Call 'create_form_list' on object, that should return a conventional form_list structure
+            form_list = self.create_form_list()
+
+            # Compute the internal form list from that
+            computed_form_list = self.__class__.compute_form_list(form_list=form_list)
+
+            # Overwrite the form_list on 'self'
+            self.form_list = computed_form_list
+
+            # Make sure we won't repeat ourselves
+            self._form_list_initialized = True
+
+        return super(MultipleFormWizardView, self).get_form_list()
 
     def render(self, forms=None, **kwargs):
         """
@@ -472,7 +502,9 @@ class NamedUrlMultipleFormWizardView(MultipleFormWizardView):
         return initkwargs
 
     def get_step_url(self, step):
-        return reverse(self.url_name, kwargs={'step': step})
+        kwargs = self.kwargs
+        kwargs.update({'step': step})
+        return reverse(self.url_name, kwargs=kwargs)
 
     def get(self, *args, **kwargs):
         """
