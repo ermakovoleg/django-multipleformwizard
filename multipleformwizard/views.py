@@ -294,7 +294,14 @@ class MultipleFormWizardView(BaseWizardView):
                     'prefix': self.get_form_prefix(step, form_class),
                     'initial': initial
                 })
-                kwargs.setdefault('instance', instance)
+                if issubclass(form_class, (forms.ModelForm, forms.models.BaseInlineFormSet)):
+                    # If the form is based on ModelForm or InlineFormSet,
+                    # add instance if available and not previously set.
+                    kwargs.setdefault('instance', instance)
+                elif issubclass(form_class, forms.models.BaseModelFormSet):
+                    # If the form is based on ModelFormSet, add queryset if available
+                    # and not previous set.
+                    kwargs.setdefault('queryset', instance)
                 form = form_class(**kwargs)
                 form._tag = form_name
                 form_collection.append(form)
