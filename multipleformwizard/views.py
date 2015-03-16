@@ -117,22 +117,6 @@ class MultipleFormWizardView(BaseWizardView):
     def create_form_list(self):
         return []
 
-    def get_form_list(self):
-        if not self._form_list_initialized and self.lazy:
-            # Call 'create_form_list' on object, that should return a conventional form_list structure
-            form_list = self.create_form_list()
-
-            # Compute the internal form list from that
-            computed_form_list = self.__class__.compute_form_list(form_list=form_list)
-
-            # Overwrite the form_list on 'self'
-            self.form_list = computed_form_list
-
-            # Make sure we won't repeat ourselves
-            self._form_list_initialized = True
-
-        return super(MultipleFormWizardView, self).get_form_list()
-
     def render(self, forms=None, **kwargs):
         """
         Returns a ``HttpResponse`` containing all needed context data.
@@ -286,6 +270,8 @@ class MultipleFormWizardView(BaseWizardView):
         new form. If needed, instance or queryset (for `ModelForm` or
         `ModelFormSet`) will be added too.
         """
+        self.load_form_list_lazy()
+
         if step is None:
             step = self.steps.current
         form_struct = self.form_list[step]
@@ -456,6 +442,25 @@ class MultipleFormWizardView(BaseWizardView):
                 continue
             cleaned_data[step] = data
         return cleaned_data
+
+    def load_form_list_lazy(self):
+        if not self.lazy:
+            return
+
+        if self._form_list_initialized:
+            return
+
+        # Call 'create_form_list' on object, that should return a conventional form_list structure
+        form_list = self.create_form_list()
+
+        # Compute the internal form list from that
+        computed_form_list = self.__class__.compute_form_list(form_list=form_list)
+
+        # Overwrite the form_list on 'self'
+        self.form_list = computed_form_list
+
+        # Make sure we won't repeat ourselves
+        self._form_list_initialized = True
 
 
 

@@ -1,4 +1,4 @@
-__version__ = '0.2.9'
+__version__ = '0.2.10'
 
 try:
     # This is in a try-except block to prevent import errors at install time
