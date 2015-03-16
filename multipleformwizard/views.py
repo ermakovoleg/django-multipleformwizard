@@ -202,6 +202,8 @@ class MultipleFormWizardView(BaseWizardView):
         just starts at the first step or wants to restart the process.
         The data of the wizard will be resetted before rendering the first step.
         """
+        self.load_form_list_lazy()
+
         self.storage.reset()
 
         # reset the current step to the first step.
@@ -216,6 +218,8 @@ class MultipleFormWizardView(BaseWizardView):
         wasn't successful), the next step (if the current step was stored
         successful) or the done view (if no more steps are available)
         """
+        self.load_form_list_lazy()
+
         # Look for a wizard_goto_step element in the posted data which
         # contains a valid step name. If one was found, render the requested
         # form. (This makes stepping back a lot easier).
@@ -270,8 +274,6 @@ class MultipleFormWizardView(BaseWizardView):
         new form. If needed, instance or queryset (for `ModelForm` or
         `ModelFormSet`) will be added too.
         """
-        self.load_form_list_lazy()
-
         if step is None:
             step = self.steps.current
         form_struct = self.form_list[step]
@@ -515,6 +517,8 @@ class NamedUrlMultipleFormWizardView(MultipleFormWizardView):
         """
         This renders the form or, if needed, does the http redirects.
         """
+        self.load_form_list_lazy()
+
         step_url = kwargs.get('step', None)
         if step_url is None:
             if 'reset' in self.request.GET:
@@ -561,6 +565,8 @@ class NamedUrlMultipleFormWizardView(MultipleFormWizardView):
         Do a redirect if user presses the prev. step button. The rest of this
         is super'd from WizardView.
         """
+        self.load_form_list_lazy()
+
         wizard_goto_step = self.request.POST.get('wizard_goto_step', None)
         if wizard_goto_step and wizard_goto_step in self.get_form_list():
             return self.render_goto_step(wizard_goto_step)
