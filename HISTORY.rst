@@ -3,6 +3,11 @@
 History
 -------
 
+0.2.11 (2015-03-17)
++++++++++++++++++++
+
+* Bugfixes and refactored lazy form list initialization.
+
 0.2.10 (2015-03-16)
 +++++++++++++++++++
 

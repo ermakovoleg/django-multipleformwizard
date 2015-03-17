@@ -600,40 +600,6 @@ class NamedUrlMultipleFormWizardView(MultipleFormWizardView):
         context['wizard']['url_name'] = self.url_name
         return context
 
-    def render_next_step(self, form, **kwargs):
-        """
-        When using the NamedUrlWizardView, we have to redirect to update the
-        browser's URL to match the shown step.
-        """
-        next_step = self.get_next_step()
-        self.storage.current_step = next_step
-        return redirect(self.get_step_url(next_step))
-
-    def render_goto_step(self, goto_step, **kwargs):
-        """
-        This method gets called when the current step has to be changed.
-        `goto_step` contains the requested step to go to.
-        """
-        self.storage.current_step = goto_step
-        return redirect(self.get_step_url(goto_step))
-
-    def render_revalidation_failure(self, failed_step, form, **kwargs):
-        """
-        When a step fails, we have to redirect the user to the first failing
-        step.
-        """
-        self.storage.current_step = failed_step
-        return redirect(self.get_step_url(failed_step))
-
-    def render_done(self, form, **kwargs):
-        """
-        When rendering the done view, we have to redirect first (if the URL
-        name doesn't fit).
-        """
-        if kwargs.get('step', None) != self.done_step_name:
-            return redirect(self.get_step_url(self.done_step_name))
-        return super(NamedUrlMultipleFormWizardView, self).render_done(form, **kwargs)
-
 
 class NamedUrlSessionMultipleFormWizardView(NamedUrlMultipleFormWizardView):
     """
