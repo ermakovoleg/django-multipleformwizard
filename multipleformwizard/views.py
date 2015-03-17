@@ -1,4 +1,6 @@
 from __future__ import unicode_literals
+import inspect
+from abc import ABCMeta, abstractmethod
 
 from collections import OrderedDict
 
@@ -11,13 +13,27 @@ from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.formtools.wizard.views import ManagementForm, WizardView as BaseWizardView
 import six
+from six import with_metaclass
+
+
+class FormListFactory(with_metaclass(ABCMeta, object)):
+    @abstractmethod
+    def create_form_list(self, wizard):
+        """
+        Creates a list of forms. The list entries can be single form
+          classes or tuples of (`step_name`, `form_class`). If you pass a list
+          of forms, the wizardview will convert the class list to
+          (`zero_based_counter`, `form_class`). This is needed to access the
+          form for a specific step.
+        :param wizard: The WizardView instance that calls this function
+        :return:
+        """
 
 
 class MultipleFormWizardView(BaseWizardView):
     template_name = 'multipleformwizard/wizard_form.html'
     cleaned_data_in_context = False
-    lazy = False
-    _form_list_initialized = False
+    _form_list_factory = None
 
     @classmethod
     def get_initkwargs(cls, form_list=None, initial_dict=None,
@@ -44,10 +60,8 @@ class MultipleFormWizardView(BaseWizardView):
           will be called with the wizardview instance as the only argument.
           If the return value is true, the step's form will be used.
         """
-        lazy = kwargs.pop('lazy', getattr(cls, 'lazy', None)) or False
 
         kwargs.update({
-            'lazy': lazy,
             'initial_dict': initial_dict or kwargs.pop('initial_dict',
                 getattr(cls, 'initial_dict', None)) or {},
             'instance_dict': instance_dict or kwargs.pop('instance_dict',
@@ -56,11 +70,12 @@ class MultipleFormWizardView(BaseWizardView):
                 getattr(cls, 'condition_dict', None)) or {}
         })
 
-        if lazy:
-            kwargs['form_list'] = []
-            return kwargs
-
         form_list = form_list or kwargs.pop('form_list', getattr(cls, 'form_list', None)) or []
+
+        if inspect.isclass(form_list) and issubclass(form_list, FormListFactory):
+            kwargs['form_list'] = []  # The actual form list will be loaded later
+            kwargs['_form_list_factory'] = form_list
+            return kwargs
 
         # build the kwargs for the wizardview instances
         kwargs['form_list'] = cls.compute_form_list(form_list, *args, **kwargs)
@@ -113,9 +128,6 @@ class MultipleFormWizardView(BaseWizardView):
                             "wizard view in order to handle file uploads.")
 
         return computed_form_list
-
-    def create_form_list(self):
-        return []
 
     def render(self, forms=None, **kwargs):
         """
@@ -202,7 +214,7 @@ class MultipleFormWizardView(BaseWizardView):
         just starts at the first step or wants to restart the process.
         The data of the wizard will be resetted before rendering the first step.
         """
-        self.load_form_list_lazy()
+        self.ensure_form_list()
 
         self.storage.reset()
 
@@ -218,7 +230,7 @@ class MultipleFormWizardView(BaseWizardView):
         wasn't successful), the next step (if the current step was stored
         successful) or the done view (if no more steps are available)
         """
-        self.load_form_list_lazy()
+        self.ensure_form_list()
 
         # Look for a wizard_goto_step element in the posted data which
         # contains a valid step name. If one was found, render the requested
@@ -452,15 +464,25 @@ class MultipleFormWizardView(BaseWizardView):
             cleaned_data[step] = data
         return cleaned_data
 
-    def load_form_list_lazy(self):
-        if not self.lazy:
-            return
+    def ensure_form_list(self):
+        self._form_list_initialized = getattr(self, '_form_list_initialized', False)
 
+        # If the form list is initialized, return
         if self._form_list_initialized:
             return
 
-        # Call 'create_form_list' on object, that should return a conventional form_list structure
-        form_list = self.create_form_list()
+        # If we already have a form list, return
+        if self.form_list:
+            self._form_list_initialized = True
+            return
+
+        # It seems we need a form_list_factory
+        assert (self._form_list_factory is not None
+                and issubclass(self._form_list_factory, FormListFactory)
+                ), 'form_list should be a list of forms or a FormListFactory class'
+
+        # Call form_list_factory method on object, which should return a conventional form_list structure
+        form_list = self._form_list_factory().create_form_list(self)
 
         # Compute the internal form list from that
         computed_form_list = self.__class__.compute_form_list(form_list=form_list)
@@ -470,7 +492,6 @@ class MultipleFormWizardView(BaseWizardView):
 
         # Make sure we won't repeat ourselves
         self._form_list_initialized = True
-
 
 
 class SessionMultipleFormWizardView(MultipleFormWizardView):
@@ -524,7 +545,7 @@ class NamedUrlMultipleFormWizardView(MultipleFormWizardView):
         """
         This renders the form or, if needed, does the http redirects.
         """
-        self.load_form_list_lazy()
+        self.ensure_form_list()
 
         step_url = kwargs.get('step', None)
         if step_url is None:
@@ -572,7 +593,7 @@ class NamedUrlMultipleFormWizardView(MultipleFormWizardView):
         Do a redirect if user presses the prev. step button. The rest of this
         is super'd from WizardView.
         """
-        self.load_form_list_lazy()
+        self.ensure_form_list()
 
         wizard_goto_step = self.request.POST.get('wizard_goto_step', None)
         if wizard_goto_step and wizard_goto_step in self.get_form_list():
