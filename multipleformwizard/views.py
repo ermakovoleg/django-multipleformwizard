@@ -1,7 +1,5 @@
 from __future__ import unicode_literals
-import inspect
-from abc import ABCMeta, abstractmethod
-
+import six
 from collections import OrderedDict
 
 from django import forms
@@ -12,22 +10,6 @@ from django.forms import formsets
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.formtools.wizard.views import ManagementForm, WizardView as BaseWizardView
-import six
-from six import with_metaclass
-
-
-class FormListFactory(with_metaclass(ABCMeta, object)):
-    @abstractmethod
-    def create_form_list(self, wizard):
-        """
-        Creates a list of forms. The list entries can be single form
-          classes or tuples of (`step_name`, `form_class`). If you pass a list
-          of forms, the wizardview will convert the class list to
-          (`zero_based_counter`, `form_class`). This is needed to access the
-          form for a specific step.
-        :param wizard: The WizardView instance that calls this function
-        :return:
-        """
 
 
 class MultipleFormWizardView(BaseWizardView):
@@ -41,8 +23,9 @@ class MultipleFormWizardView(BaseWizardView):
         """
         Creates a dict with all needed parameters for the form wizard instances.
 
-        * `form_list` - is a list of forms. The list entries can be single form
-          classes, tuples of (`step_name`, `form_class`) or tuples of (`step_name`, {`form_name`: `form_class`}).
+        * `form_list` - is a list of forms, or a callable that returns a list of forms.
+          The list entries can be single form classes, tuples of (`step_name`, `form_class`) or tuples
+          of (`step_name`, {`form_name`: `form_class`}).
           If you pass a list of forms, the wizardview will convert the class list to
           (`zero_based_counter`, `form_class`). This is needed to access the
           form for a specific step.
@@ -72,7 +55,7 @@ class MultipleFormWizardView(BaseWizardView):
 
         form_list = form_list or kwargs.pop('form_list', getattr(cls, 'form_list', None)) or []
 
-        if inspect.isclass(form_list) and issubclass(form_list, FormListFactory):
+        if isinstance(form_list, six.string_types) or callable(form_list):
             kwargs['form_list'] = []  # The actual form list will be loaded later
             kwargs['_form_list_factory'] = form_list
             return kwargs
@@ -128,6 +111,7 @@ class MultipleFormWizardView(BaseWizardView):
                             "wizard view in order to handle file uploads.")
 
         return computed_form_list
+
 
     def render(self, forms=None, **kwargs):
         """
@@ -477,12 +461,19 @@ class MultipleFormWizardView(BaseWizardView):
             return
 
         # It seems we need a form_list_factory
-        assert (self._form_list_factory is not None
-                and issubclass(self._form_list_factory, FormListFactory)
-                ), 'form_list should be a list of forms or a FormListFactory class'
+        assert self._form_list_factory is not None, 'form_list should be a list of forms or a function reference'
+
+        factory_fnc = None
+        if isinstance(self._form_list_factory, six.string_types):
+            factory_fnc = getattr(self, self._form_list_factory)
+        elif callable(self._form_list_factory):
+            factory_fnc = self._form_list_factory
+
+        # Make sure we retrieved a factory function
+        assert factory_fnc is not None
 
         # Call form_list_factory method on object, which should return a conventional form_list structure
-        form_list = self._form_list_factory().create_form_list(self)
+        form_list = factory_fnc(self)
 
         # Compute the internal form list from that
         computed_form_list = self.__class__.compute_form_list(form_list=form_list)
