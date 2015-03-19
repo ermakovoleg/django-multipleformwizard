@@ -168,8 +168,14 @@ class MultipleFormWizardView(BaseWizardView):
                 final_forms[form_key].append(form_obj)
 
         result_forms = {}
+        result_forms_dict = {}
         for form_key in final_forms:
             formcollection = final_forms[form_key]
+            result_forms_dict[form_key] = {}
+            for form in formcollection:
+                if hasattr(form, '_tag'):
+                    result_forms_dict[form_key][form._tag] = form
+
             if len(formcollection) == 1:
                 result_forms[form_key] = formcollection[0]
             elif len(formcollection) > 1:
@@ -180,13 +186,14 @@ class MultipleFormWizardView(BaseWizardView):
                     delattr(form, '_tag')
                 result_forms[form_key] = formcollection_dict
 
+
         # Construct a result list, ordered by step number
         form_list = [result_forms[key] for key in sorted(result_forms.keys())]
 
         # render the done view and reset the wizard before returning the
         # response. This is needed to prevent from rendering done with the
         # same data twice.
-        done_response = self.done(form_list=form_list, form_dict=result_forms, **kwargs)
+        done_response = self.done(form_list=form_list, form_dict=result_forms_dict, **kwargs)
         self.storage.reset()
         return done_response
 
@@ -287,7 +294,7 @@ class MultipleFormWizardView(BaseWizardView):
                 kwargs.update({
                     'data': data,
                     'files': files,
-                    'prefix': self.get_form_prefix(step, form_class),
+                    'prefix': self.get_form_prefix(step, form_name),
                     'initial': initial
                 })
                 if issubclass(form_class, (forms.ModelForm, forms.models.BaseInlineFormSet)):
