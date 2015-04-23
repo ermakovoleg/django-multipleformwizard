@@ -9,7 +9,12 @@ from django.core.urlresolvers import reverse
 from django.forms import formsets
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.formtools.wizard.views import ManagementForm, WizardView as BaseWizardView
+
+
+try:
+    from formtools.wizard.views import ManagementForm, WizardView as BaseWizardView
+except ImportError:
+    from django.contrib.formtools.wizard.views import ManagementForm, WizardView as BaseWizardView
 
 
 class MultipleFormWizardView(BaseWizardView):

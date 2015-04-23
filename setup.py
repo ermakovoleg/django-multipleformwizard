@@ -38,7 +38,8 @@ setup(
     include_package_data=True,
     install_requires=[
         'Django>=1.6',
-        'six>=1.9.0'
+        'six>=1.9.0',
+        'django-formtools==1.0'
     ],
     license="MIT",
     zip_safe=False,
