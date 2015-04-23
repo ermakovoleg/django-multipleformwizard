@@ -3,18 +3,14 @@ import six
 from collections import OrderedDict
 
 from django import forms
-from django.contrib.formtools.wizard.storage.exceptions import NoFileStorageConfigured
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.forms import formsets
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 
-
-try:
-    from formtools.wizard.views import ManagementForm, WizardView as BaseWizardView
-except ImportError:
-    from django.contrib.formtools.wizard.views import ManagementForm, WizardView as BaseWizardView
+from formtools.wizard.storage.exceptions import NoFileStorageConfigured
+from formtools.wizard.views import ManagementForm, WizardView as BaseWizardView
 
 
 class MultipleFormWizardView(BaseWizardView):
