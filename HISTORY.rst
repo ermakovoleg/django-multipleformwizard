@@ -3,6 +3,11 @@
 History
 -------
 
+0.2.14 (2015-04-23)
++++++++++++++++++++
+
+* Added Django Formtools as a dependency, to be compatible with Django >= 1.8.
+
 0.2.13 (2015-03-24)
 +++++++++++++++++++
 
