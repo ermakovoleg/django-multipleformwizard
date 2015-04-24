@@ -1,5 +1,3 @@
-from django.core.exceptions import ImproperlyConfigured
-
 __version__ = '0.2.15'
 
 try:
@@ -7,5 +5,5 @@ try:
     from .views import (SessionMultipleFormWizardView, CookieMultipleFormWizardView,
                         NamedUrlSessionMultipleFormWizardView, NamedUrlCookieMultipleFormWizardView,
                         MultipleFormWizardView, NamedUrlMultipleFormWizardView)
-except (ImportError, ImproperlyConfigured):
+except ImportError:
     pass
