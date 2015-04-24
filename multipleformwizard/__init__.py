@@ -1,6 +1,6 @@
 from django.core.exceptions import ImproperlyConfigured
 
-__version__ = '0.2.14'
+__version__ = '0.2.15'
 
 try:
     # This is in a try-except block to prevent import errors at install time
