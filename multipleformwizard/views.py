@@ -497,14 +497,14 @@ class SessionMultipleFormWizardView(MultipleFormWizardView):
     """
     A WizardView with pre-configured SessionStorage backend.
     """
-    storage_name = 'django.contrib.formtools.wizard.storage.session.SessionStorage'
+    storage_name = 'formtools.wizard.storage.session.SessionStorage'
 
 
 class CookieMultipleFormWizardView(MultipleFormWizardView):
     """
     A WizardView with pre-configured CookieStorage backend.
     """
-    storage_name = 'django.contrib.formtools.wizard.storage.cookie.CookieStorage'
+    storage_name = 'formtools.wizard.storage.cookie.CookieStorage'
     
 
 class NamedUrlMultipleFormWizardView(MultipleFormWizardView):
@@ -647,14 +647,14 @@ class NamedUrlSessionMultipleFormWizardView(NamedUrlMultipleFormWizardView):
     """
     A NamedUrlWizardView with pre-configured SessionStorage backend.
     """
-    storage_name = 'django.contrib.formtools.wizard.storage.session.SessionStorage'
+    storage_name = 'formtools.wizard.storage.session.SessionStorage'
 
 
 class NamedUrlCookieMultipleFormWizardView(NamedUrlMultipleFormWizardView):
     """
     A NamedUrlFormWizard with pre-configured CookieStorageBackend.
     """
-    storage_name = 'django.contrib.formtools.wizard.storage.cookie.CookieStorage'
+    storage_name = 'formtools.wizard.storage.cookie.CookieStorage'
 
     
 
