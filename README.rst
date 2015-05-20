@@ -49,13 +49,14 @@ Example use
 
     from .forms import Form1, Form2, Form3
 
+
     class Wizard(SessionMultipleFormWizardView):
         form_list = [
             ("start", Form1),
             ("user_info", (
                 ('account', Form2),
                 ('address', Form3)
-            )
+            ))
         ]
 
         templates = {
