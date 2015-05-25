@@ -102,6 +102,12 @@ class MultipleFormWizardView(BaseWizardView):
                 form_collection = [form]
 
             for form in form_collection:
+                # must test for BaseFormSet again in case form_collection
+                # is a dict containing one.
+                if issubclass(form, formsets.BaseFormSet):
+                    # if the element is based on BaseFormSet (FormSet or 
+                    # ModelFormSet) we need to override the form variable.
+                    form = form.form
                 # check if any form contains a FileField, if yes, we need a
                 # file_storage added to the wizardview (by subclassing).
                 for field in six.itervalues(form.base_fields):
