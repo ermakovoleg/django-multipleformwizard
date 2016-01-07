@@ -84,7 +84,7 @@ class MultipleFormWizardView(BaseWizardView):
                 elif isinstance(form, (list, tuple)):
                     form_mapping = OrderedDict(form)
                     computed_form_list[six.text_type(step_name)] = form_mapping
-                elif issubclass(form, forms.Form):
+                elif issubclass(form, (forms.Form, forms.BaseForm, forms.BaseFormSet)):
                     computed_form_list[six.text_type(step_name)] = form
             else:
                 # if not, add the form with a zero based counter as unicode
@@ -105,7 +105,7 @@ class MultipleFormWizardView(BaseWizardView):
                 # must test for BaseFormSet again in case form_collection
                 # is a dict containing one.
                 if issubclass(form, formsets.BaseFormSet):
-                    # if the element is based on BaseFormSet (FormSet or 
+                    # if the element is based on BaseFormSet (FormSet or
                     # ModelFormSet) we need to override the form variable.
                     form = form.form
                 # check if any form contains a FileField, if yes, we need a
@@ -511,7 +511,7 @@ class CookieMultipleFormWizardView(MultipleFormWizardView):
     A WizardView with pre-configured CookieStorage backend.
     """
     storage_name = 'formtools.wizard.storage.cookie.CookieStorage'
-    
+
 
 class NamedUrlMultipleFormWizardView(MultipleFormWizardView):
     """
@@ -662,5 +662,5 @@ class NamedUrlCookieMultipleFormWizardView(NamedUrlMultipleFormWizardView):
     """
     storage_name = 'formtools.wizard.storage.cookie.CookieStorage'
 
-    
+
 
