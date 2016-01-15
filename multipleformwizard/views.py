@@ -328,7 +328,7 @@ class MultipleFormWizardView(BaseWizardView):
             })
             kwargs.setdefault('instance', self.get_form_instance(step))
             form_collection = [form_class(**kwargs)]
-        elif issubclass(form_struct, forms.Form):
+        elif issubclass(form_struct, (forms.Form, forms.BaseFormSet)):
             form_class = form_struct
             kwargs = self.get_form_kwargs(step)
             kwargs.update({
