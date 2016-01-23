@@ -432,7 +432,7 @@ class MultipleFormWizardView(BaseWizardView):
             multiple_forms = isinstance(self.form_list[step], dict)
 
             if multiple_forms:
-                multiple_form_keys = self.form_list[step].keys()
+                multiple_form_keys = list(self.form_list[step].keys())
 
             for i, form_obj in enumerate(form_collection):
                 if form_obj.is_valid():
